@@ -7,6 +7,22 @@ namespace Lesson_14;
 class Program
 {
 
+    public static void OpenPicture(string path)
+    {
+        Process cmd = new Process();
+        cmd.StartInfo.FileName = "cmd.exe";
+        cmd.StartInfo.RedirectStandardInput = true;
+        cmd.StartInfo.RedirectStandardOutput = true;
+        cmd.StartInfo.CreateNoWindow = true;
+        cmd.StartInfo.UseShellExecute = false;
+        cmd.Start();
+
+        cmd.StandardInput.WriteLine("\"" + path + "\"");
+        cmd.StandardInput.Flush();
+        cmd.StandardInput.Close();
+        cmd.WaitForExit();
+    }
+
     static void Main()
     {
         string message = "";
@@ -53,7 +69,11 @@ class Program
                     foreach (FileInfo file in dirInfo.GetFiles())
                         Console.WriteLine($"{index++}) {file.Name}");
 
-                    if (index == 1) message = "No screenshots found...";
+                    if (index == 1)
+                    {
+                        message = "No screenshots found...";
+                        break;
+                    }
                     else message = "";
 
                     Console.WriteLine("\n\nPress any key to continue...");
@@ -94,7 +114,7 @@ class Program
                         {
                             File.Delete(path + list[delInput - 1]);
                             message = "Screenshot succesfully deleted...";
-                            message = path + list[delInput - 1] + ".png";
+                            //message = path + list[delInput - 1];
                         }
                         else
                             message = "No screenshot with that ID...";
@@ -104,14 +124,43 @@ class Program
                     break;
                 case ConsoleKey.D4:
 
-                    // Nece defe yoxlasamda islemedi...
-                    message = "Nece defe yoxlasamda islemedi mellim...\nHer defe yeni problem cixirdi...";
+                    short index3 = 1;
 
-                    // Process photoViewer = new Process();
-                    // photoViewer.StartInfo.FileName = @"C:\Windows\system32\mspaint.exe";
-                    // photoViewer.StartInfo.Arguments = @"C:\Users\acer\Desktop\Images\9-15-2022___02 07 57.png";//path + "9-15-2022___02 07 57.png";
-                    // photoViewer.Start();
-                    // Process.Start(path + "9-15-2022   01 12 00.png");
+                    List<string> list2 = new List<string>();
+
+                    DirectoryInfo dirInfor2 = new DirectoryInfo(path);
+                    foreach (FileInfo file in dirInfor2.GetFiles())
+                    {
+                        Console.WriteLine($"{index3++}) {file.Name}");
+                        list2.Add(file.Name);
+                    }
+                    if (index3 == 1)
+                    {
+                        message = "No screenshots found to open...";
+                    }
+                    else
+                    {
+                        Console.Write("Enter an ID to open : ");
+                        int openInput = 0;
+                        try
+                        {
+                            openInput = Convert.ToInt32(Console.ReadLine());
+                        }
+                        catch (Exception)
+                        {
+                            message = "Invalid input...";
+                            break;
+                        }
+
+                        if (openInput > 0 && openInput < list2.Count)
+                        {
+                            OpenPicture(path + list2[openInput - 1]);
+                            message = "Image succesfully opened...";
+                            // message = path + list2[openInput - 1];
+                        }
+                        else
+                            message = "No screenshot with that ID...";
+                    }
 
                     break;
                 case ConsoleKey.D5:
